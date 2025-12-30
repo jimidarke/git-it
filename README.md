@@ -11,6 +11,14 @@ One-stop save button for git workflows. A Claude Code skill that simplifies vers
 - Creates version tags automatically
 - Asks for confirmation before any changes
 
+## Installation
+
+Clone this repo into your Claude Code skills directory:
+
+```bash
+git clone https://github.com/jimidarke/git-it.git ~/.claude/skills/git-it
+```
+
 ## Usage
 
 Just say:
