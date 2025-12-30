@@ -1,0 +1,22 @@
+1.0.0
+
+## Changelog
+
+### 1.0.0 (2025-12-29)
+Initial release of git-it skill.
+
+Features:
+- Auto-detect git repository (init if needed)
+- Git profile setup guidance (user.name, user.email)
+- Smart .gitignore suggestions based on actual files
+- Diff analysis for Conventional Commit generation
+- Semantic version bump detection (patch/minor/major)
+- VERSION.txt creation and maintenance
+- Git tagging with v-prefix (v1.0.0)
+- User confirmation before all changes
+- Optional push to remote
+- Beginner onboarding: Complete first-time user flow with global git config guidance
+- Auto-display welcome tutorial when VERSION.txt missing/empty or no git repo
+- Educational triggers: "where is my work saved?", "how is my work being saved?"
+- Educational triggers: "what is git doing?", "explain git", "how does git work?"
+- Save history viewer: "show my save history", "what saves do I have?"
