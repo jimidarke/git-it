@@ -210,16 +210,10 @@ The skill creates and maintains VERSION.txt in project root:
 ## Changelog
 
 ### 1.2.3 (2025-12-29)
-Fix null pointer in parser.
-
-Commits:
-- abc1234 fix(parser): handle null input gracefully
+- Fix null pointer in parser
 
 ### 1.2.2 (2025-12-28)
-Update documentation.
-
-Commits:
-- def5678 docs: update README with examples
+- Update documentation
 ```
 
 ### Format Rules
@@ -230,12 +224,21 @@ Commits:
 - Each entry format:
   ```
   ### X.Y.Z (YYYY-MM-DD)
-  Brief description of changes.
-
-  Commits:
-  - <hash> <commit message>
+  - Brief description of changes
   ```
 
 ### Tag Format
 - Always prefix with `v`: `v1.2.3`
 - Annotated tags with commit message: `git tag -a v1.2.3 -m "commit message"`
+
+---
+
+## Security Patterns
+
+For security-related detection patterns, see `SECURITY.md`.
+
+The security scan (Phase 9.5) detects:
+- **HIGH Priority**: API keys, private keys, credentials, database URLs, URI credentials, tokens
+- **LOW Priority**: Network exposure, debug flags, PII (credit cards, SSN/SIN, phone numbers, emails)
+
+Acknowledged warnings are stored in project-local `.security-ignored` file.

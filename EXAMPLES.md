@@ -286,3 +286,274 @@ Current status:
 
 Your work is safe! To share it online: "push to GitHub"
 ```
+
+---
+
+## Example 11: Security Scan - Clean Pass
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: main
+
+Analyzing changes...
+  Added:    src/api/users.py (+89 lines)
+  Modified: src/app.py (+12, -3)
+  Added:    tests/test_users.py (+45 lines)
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(api): add user management endpoints
+Version:  1.3.0 -> 1.4.0 (MINOR)
+Tag:      v1.4.0
+Branch:   main
+
+Files (3 total):
+  New: src/api/users.py, tests/test_users.py
+  Modified: src/app.py
+
+Lines: +146, -3
+
+Save it? [Y/n] Y
+
+Security scan: ✓ Passed
+
+Saving...
+  Committed: feat(api): add user management endpoints
+  Tagged: v1.4.0
+
+Push to remote? [y/N]
+```
+
+---
+
+## Example 12: Security Scan - Warnings Found
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: feature-aws-integration
+
+Analyzing changes...
+  Added:    src/aws/client.py (+156 lines)
+  Added:    config/aws.py (+23 lines)
+  Modified: src/app.py (+8, -2)
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(aws): add S3 client integration
+Version:  1.4.0 -> 1.5.0 (MINOR)
+Tag:      v1.5.0
+Branch:   feature-aws-integration
+
+Save it? [Y/n] Y
+
+Security scan: ⚠️ 2 warnings
+
+  ⚠️ API Key: AWS access key detected
+     File: config/aws.py:15
+     Match: AKIAIOSFODNN7EXAMPLE
+
+  ⚠️ URI Credentials: SFTP password in URL
+     File: src/aws/client.py:42
+     Match: sftp://deploy:s3cr3t@backup.example.com
+
+Recommendations:
+  1. Move secrets to environment variables
+  2. Add sensitive files to .gitignore
+  3. If already committed, rotate credentials
+
+Add config/aws.py to .gitignore? [Y/n] n
+
+Continue with commit? [y/N] y
+
+Add to .security-ignored? (optional reason): Test API key for development
+
+Added to .security-ignored
+Added .security-ignored to .gitignore (keeping acknowledgments private)
+
+Saving...
+  Committed: feat(aws): add S3 client integration
+  Tagged: v1.5.0
+
+Push to remote? [y/N]
+```
+
+---
+
+## Example 13: Security Scan - User Declines
+
+```
+$ /git-it
+
+...
+
+Security scan: ⚠️ 1 warning
+
+  ⚠️ Private Key: RSA private key detected
+     File: deploy/prod.pem:1
+     Match: -----BEGIN RSA PRIVATE KEY-----
+
+Continue with commit? [y/N] n
+
+Commit cancelled.
+
+Tip: Add sensitive files to .gitignore:
+  echo "deploy/prod.pem" >> .gitignore
+```
+
+---
+
+## Example 14: Security Scan - Informative Notes
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: main
+
+Analyzing changes...
+  Modified: src/server.py (+15, -8)
+  Modified: config/settings.py (+4, -1)
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(server): add HTTP server configuration
+Version:  1.5.0 -> 1.6.0 (MINOR)
+Tag:      v1.6.0
+Branch:   main
+
+Save it? [Y/n] Y
+
+Security scan: ✓ Passed
+
+Notes:
+  ℹ️ Debug flag enabled - config/settings.py:12
+     DEBUG = True
+
+  ℹ️ Server binds to all interfaces - src/server.py:45
+     app.run(host='0.0.0.0', port=8080)
+
+Saving...
+  Committed: feat(server): add HTTP server configuration
+  Tagged: v1.6.0
+
+Push to remote? [y/N]
+```
+
+---
+
+## Example 15: Security Scan - Acknowledged Warning
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: main
+
+=== SAVE POINT SUMMARY ===
+
+Message:  chore: update deployment config
+Version:  1.6.0 -> 1.6.1 (PATCH)
+
+Save it? [Y/n] Y
+
+Security scan: ⚠️ 1 warning (acknowledged)
+
+  ⚠️ Private Key: SSH key file staged
+     File: deploy/server.pem
+     Status: Previously acknowledged (test key for CI)
+
+Saving...
+  Committed: chore: update deployment config
+  Tagged: v1.6.1
+
+Push to remote? [y/N]
+```
+
+---
+
+## Example 16: Security Scan - PII Detection
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: feature-customer-export
+
+Analyzing changes...
+  Added:    scripts/export_customers.py (+89 lines)
+  Added:    data/sample_customers.csv (+50 lines)
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(scripts): add customer data export
+Version:  1.6.1 -> 1.7.0 (MINOR)
+
+Save it? [Y/n] Y
+
+Security scan: ✓ Passed
+
+Notes:
+  ℹ️ Possible phone number - data/sample_customers.csv:12
+     Pattern: (555) 123-4567
+
+  ℹ️ Possible personal email - data/sample_customers.csv:15
+     john.smith@gmail.com
+
+  ℹ️ Credit card pattern (test) - scripts/export_customers.py:34
+     4111-1111-1111-1111 (known test number, skipped)
+
+Saving...
+  Committed: feat(scripts): add customer data export
+  Tagged: v1.7.0
+```
+
+---
+
+## Example 17: Full Security Scan (All Files)
+
+```
+$ save my work with a full security scan
+
+Checking environment... OK
+Branch: main
+
+Analyzing changes...
+  Modified: src/config.py (+5, -2)
+
+=== SAVE POINT SUMMARY ===
+
+Message:  fix(config): update timeout value
+Version:  1.7.0 -> 1.7.1 (PATCH)
+
+Save it? [Y/n] Y
+
+Running FULL security scan (all 47 tracked files)...
+
+Security scan: ⚠️ 1 warning, 2 notes
+
+  ⚠️ API Key: Possible hardcoded token (existing file)
+     File: src/legacy/old_client.py:89
+     Match: api_key = "sk_test_..."
+
+Notes:
+  ℹ️ Debug flag enabled - src/config.py:12
+  ℹ️ Server binds to 0.0.0.0 - docker-compose.yml:15
+
+The warning above is in an EXISTING file (not part of this commit).
+This was found because you requested a full scan.
+
+Continue with commit? [y/N] y
+
+Add src/legacy/old_client.py to .security-ignored? [y/N] y
+Reason (optional): Legacy test key, scheduled for removal
+
+Added to .security-ignored
+
+Saving...
+  Committed: fix(config): update timeout value
+  Tagged: v1.7.1
+```

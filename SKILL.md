@@ -1,18 +1,19 @@
 ---
 name: git-it
 description: One-stop save button for git workflows and version tracking. Auto-detects repo state, suggests .gitignore patterns, generates Conventional Commit messages, determines semantic version bumps, and executes commit+tag with final confirmation. Use when saving work, committing changes, or versioning releases.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(git:*), Bash(test:*), Bash(ls:*), Bash(cat:*)
+allowed-tools: Read, Write, Edit, Grep, Bash(git:*), Bash(test:*)
 ---
 
 # git-it: One-Stop Git Save
 
-**Think of git like a video game save system.** Every time you save, you create a checkpoint you can return to. This skill makes saving your work as simple as pressing "Save Game."
+**Think of git like a video game save system.** Every time you save, you create a checkpoint you can return to. This skill makes saving your work just as easy - type *"Save my work"* and it will! 
 
 ## Quick Start
 
 Just say any of these:
-- **"/git-it"** or **"save my work"** - Save to your current branch
+- **"save my work"** - Save to your current branch - same as **/git-it**
 - **"save my work somewhere else"** - Create a new branch first, then save
+- **"save my work with a full security scan"** - Scan ALL project files, not just changes
 - **"what branches do I have?"** - See all your save locations
 
 **Learning about git:**
@@ -20,6 +21,7 @@ Just say any of these:
 - **"how is my work being saved?"** - Shows the save system overview
 - **"what is git doing?"** - Explains what happens behind the scenes
 - **"explain git"** or **"how does git work?"** - Full beginner tutorial
+- **"how is my work checked for security?"** - Explains the security scan process
 
 ---
 
@@ -76,10 +78,7 @@ git status -sb                         # Shows ahead/behind count
 ```
 
 If remote exists and branch is behind:
-```bash
-git pull origin <branch> --ff-only   # Auto-pull if fast-forward (no conflicts)
-```
-- If fast-forward succeeds → continue silently, show "Synced with remote"
+- Attempt `git pull --ff-only` (auto-pull if no conflicts)
 - If conflicts would occur → warn user, ask how to proceed
 
 **Never auto-push.** Always ask: "Push to remote? [y/N]"
@@ -140,23 +139,62 @@ Options: [Y] Save  [n] Cancel  [e] Edit message  [v] Edit version
 
 Wait for user input before proceeding.
 
-### Phase 10: Execute
+### Phase 10: Security Scan
+
+**See:** `SECURITY.md` for detection patterns and output formats.
+
+After user confirms intent to commit, scan staged content for security issues.
+
+**Default Scan Scope (staged files only):**
+- Scans ONLY files being committed (`git diff --cached`)
+- Excludes: unchanged committed files, .gitignored files, untracked files not staged
+- This is fast and focuses on what's actually changing
+
+**Full Scan Mode** (triggered by "save my work with a full security scan"):
+- Scans ALL tracked files in the repository (`git ls-files`)
+- Use for: initial project audit, periodic security reviews, before public releases
+- Takes longer but catches issues in existing codebase
+
+**Scan Process:**
+1. Get list of files (staged only OR all tracked, based on mode)
+2. Check filenames against sensitive patterns (*.pem, id_rsa, credentials.*, etc.)
+3. Scan file contents for HIGH priority patterns (API keys, private keys, credentials)
+4. Scan for LOW priority patterns (debug flags, exposed ports, PII)
+5. Check project-local `.security-ignored` for acknowledged patterns
+6. Display results based on severity
+
+**Output Levels:**
+- **PASS**: `Security scan: ✓ Passed` → continue to Phase 10
+- **INFO**: Show notes, continue to Phase 10 automatically
+- **WARN**: Show warnings with recommendations, ask `Continue with commit? [y/N]`
+
+**On Warnings:**
+1. Display all warnings with file locations and matches
+2. Show remediation recommendations
+3. Offer to add files to .gitignore (integrates with Phase 6 patterns)
+4. Check `.security-ignored` - if pattern acknowledged, show but don't prompt
+5. For new warnings: Ask `Continue with commit? [y/N]` (default No)
+6. If user confirms, offer to add to `.security-ignored` with optional reason
+7. If user declines, return to Phase 9 for reconsideration
+
+**Auto-gitignore `.security-ignored`:**
+When creating `.security-ignored`, automatically add it to `.gitignore` if not already present.
+This prevents broadcasting acknowledged security patterns to public repositories.
+
+**Never block commit** - user has final decision, but defaults to safe option.
+
+### Phase 11: Execute
 
 After confirmation:
-```bash
-git add -A                                    # Stage all
-git commit -m "<message>"                     # Commit
-git tag -a v<version> -m "<message>"          # Tag
-```
-
-Then update VERSION.txt (via Write tool).
-
-**Push is NEVER automatic.** Always ask: "Push to remote? [y/N]"
-If user confirms: `git push origin HEAD && git push origin v<version>`
+1. `git add -A` → `git commit` → `git tag -a v<version>`
+2. Update VERSION.txt (via Write tool)
+3. **Push is NEVER automatic.** Ask: "Push to remote? [y/N]"
 
 ---
 
 ## Branch Workflows
+
+**See:** `EXAMPLES.md` for complete interaction examples.
 
 ### "Save My Work Somewhere Else"
 
@@ -173,14 +211,9 @@ When multiple branches exist:
 
 ### Simple Merge
 
-```bash
-git diff main...feature-branch --name-only   # Check for conflicts
-git checkout main && git merge feature-branch
-git branch -d feature-branch                  # Optional cleanup
-```
-
-If same files modified → warn about potential conflicts, offer options.
-If clean → proceed with merge, offer to delete merged branch.
+1. Check for conflicts: `git diff main...feature-branch --name-only`
+2. If clean → merge, offer to delete merged branch
+3. If same files modified → warn about potential conflicts, offer options
 
 ---
 
@@ -191,6 +224,8 @@ Beyond workflow phases, also handle:
 - Large binary (>100MB) → warn about git LFS
 - Secrets detected (.env) → warn prominently, suggest .gitignore
 - Push rejected (behind remote) → suggest `git pull --rebase` then push again
+- Security warnings detected → show detailed warnings, allow continue with acknowledgment
+- Previously acknowledged warnings → flag but don't prompt (check `.security-ignored`)
 
 ---
 
@@ -199,7 +234,8 @@ Beyond workflow phases, also handle:
 | File | Contents |
 |------|----------|
 | `PATTERNS.md` | .gitignore patterns, commit format, version bump logic |
-| `EXAMPLES.md` | 10 usage examples (beginner to advanced) |
+| `SECURITY.md` | Security scan patterns, detection rules, best practices |
+| `EXAMPLES.md` | Usage examples (beginner to advanced) |
 | `WELCOME.md` | Welcome banners, educational responses, setup messages |
 
 ---
@@ -209,6 +245,7 @@ Beyond workflow phases, also handle:
 - No interactive rebases or conflict resolution
 - Stages all changes (no partial staging)
 - Push always opt-in, confirmation required for all writes
+- Security scan is best attempt and not a substitute for proper cyber security audit
 
 ---
 

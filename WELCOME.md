@@ -170,6 +170,54 @@ To see full details: "show commit [hash]"
 
 ---
 
+### "how is my work checked for security?"
+
+```
+HOW GIT-IT CHECKS YOUR WORK FOR SECURITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every time you save, git-it scans your changes for security issues
+BEFORE they become part of your permanent history.
+
+WHAT GETS SCANNED (Default)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Only the files you're about to commit:
+  ✓ Modified files      (changes you made)
+  ✓ New files           (files you added)
+  ✗ Unchanged files     (already saved - skipped)
+  ✗ Ignored files       (in .gitignore - skipped)
+
+WHAT IT LOOKS FOR
+━━━━━━━━━━━━━━━━━
+  HIGH PRIORITY (will warn you):
+    • API keys & tokens    (AWS, GitHub, Stripe, etc.)
+    • Private keys         (SSH, RSA, PEM files)
+    • Passwords in code    (hardcoded credentials)
+    • Database URLs        (with embedded passwords)
+
+  LOW PRIORITY (just a note):
+    • Debug flags enabled  (DEBUG=true)
+    • Server binding       (0.0.0.0 exposure)
+    • Personal info        (emails, phone numbers)
+
+WHAT HAPPENS
+━━━━━━━━━━━━
+  ✓ Pass     → Your save continues automatically
+  ℹ️ Info     → Shows notes, continues automatically
+  ⚠️ Warning  → Asks you before continuing (safe default: No)
+
+FULL PROJECT SCAN
+━━━━━━━━━━━━━━━━━
+Want to check ALL files, not just changes?
+Say: "save my work with a full security scan"
+
+Good for: new projects, periodic audits, before going public
+
+See SECURITY.md for the complete list of patterns checked.
+```
+
+---
+
 ## Git Installation Instructions
 
 **Display when:** `git --version` fails.

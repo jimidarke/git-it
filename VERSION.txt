@@ -1,6 +1,14 @@
-1.0.1
+1.1.0
 
 ## Changelog
+
+### 1.1.0 (2026-01-05)
+- Add SECURITY.md with comprehensive security scan patterns
+- Add full security scan mode trigger
+- Add security education content to WELCOME.md
+- Optimize allowed-tools list
+- Fix example numbering in EXAMPLES.md
+- Simplify VERSION.txt format in PATTERNS.md
 
 ### 1.0.1 (2025-12-29)
 - Add README
