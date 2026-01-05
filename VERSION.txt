@@ -1,6 +1,9 @@
-1.1.0
+1.1.1
 
 ## Changelog
+
+### 1.1.1 (2026-01-05)
+- Restore Bash(ls:*) and Bash(cat:*) to allowed-tools
 
 ### 1.1.0 (2026-01-05)
 - Add SECURITY.md with comprehensive security scan patterns

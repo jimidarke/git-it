@@ -1,7 +1,7 @@
 ---
 name: git-it
 description: One-stop save button for git workflows and version tracking. Auto-detects repo state, suggests .gitignore patterns, generates Conventional Commit messages, determines semantic version bumps, and executes commit+tag with final confirmation. Use when saving work, committing changes, or versioning releases.
-allowed-tools: Read, Write, Edit, Grep, Bash(git:*), Bash(test:*)
+allowed-tools: Read, Write, Edit, Grep, Bash(git:*), Bash(test:*), Bash(ls:*), Bash(cat:*)
 ---
 
 # git-it: One-Stop Git Save
