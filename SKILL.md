@@ -123,18 +123,55 @@ Format: `<type>(<scope>): <description>`
 - Detect scope from most-changed directory
 - Imperative mood, <50 chars, no period
 
-### Phase 8: Determine Version Bump
+### Phase 8: Version Scanning & Bump Determination
 
-**See:** `PATTERNS.md` → "Version Bump Logic"
+**See:** `PATTERNS.md` → "Version Bump Logic" and "Version Reference Patterns"
 
-Read VERSION.txt for current version (default: 0.0.0 → 0.1.0)
+**8a. Scan for version references:**
+- Check VERSION.txt for current version (default: 0.0.0)
+- Scan manifest files: `package.json`, `pyproject.toml`, `Cargo.toml`, `setup.py`, `pom.xml`
+- Scan source files: `__version__`, `VERSION` constants in common locations
+
+**8b. Check consistency:**
+- Compare all detected versions
+- If mismatch found → warn user, show all values, ask to sync
+
+**8c. Determine bump type:**
 - MAJOR: Breaking changes, deleted public files
 - MINOR: New features, `feat:` commits
 - PATCH: Fixes, docs, tests, <20 lines
+- New project: 0.0.0 → 0.1.0
 
 ### Phase 9: User Confirmation
 
-Display summary showing: commit message, version bump, tag, branch, files changed, lines +/-.
+Display summary showing:
+- Commit message with co-author trailer preview
+- Version bump (current → new)
+- Version files to update (list all detected: VERSION.txt, package.json, etc.)
+- Tag to create
+- Branch
+- Files changed, lines +/-
+
+Example summary:
+```
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(api): add user endpoints
+
+          Co-Authored-By: Claude <noreply@anthropic.com>
+
+Version:  1.2.3 → 1.3.0 (MINOR)
+Files:    VERSION.txt, package.json, src/__init__.py
+Tag:      v1.3.0
+Branch:   main
+
+Changes (3 files):
+  New: src/api/users.py
+  Modified: src/app.py (+12, -3)
+
+Lines: +89, -3
+```
+
 Options: [Y] Save  [n] Cancel  [e] Edit message  [v] Edit version
 
 Wait for user input before proceeding.
@@ -186,9 +223,25 @@ This prevents broadcasting acknowledged security patterns to public repositories
 ### Phase 11: Execute
 
 After confirmation:
-1. `git add -A` → `git commit` → `git tag -a v<version>`
-2. Update VERSION.txt (via Write tool)
-3. **Push is NEVER automatic.** Ask: "Push to remote? [y/N]"
+
+1. **Update ALL version files BEFORE commit** (atomic version bump):
+   - Update VERSION.txt (version + changelog entry)
+   - Update all detected manifest files (package.json, pyproject.toml, etc.)
+   - Update source file version constants
+
+2. **Stage and commit:**
+   - `git add -A` (includes version updates + code changes)
+   - `git commit` with co-author trailer:
+     ```
+     git commit -m "<type>(<scope>): <description>
+
+     Co-Authored-By: Claude <noreply@anthropic.com>"
+     ```
+
+3. **Tag the commit:**
+   - `git tag -a v<version> -m "<commit message>"`
+
+4. **Push is NEVER automatic.** Ask: "Push to remote? [y/N]"
 
 ---
 

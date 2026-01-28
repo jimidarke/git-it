@@ -1,6 +1,13 @@
-1.1.1
+1.2.0
 
 ## Changelog
+
+### 1.2.0 (2026-01-28)
+- Add co-author trailer to all commits
+- Add version reference scanning across manifest files
+- Add atomic version bump (all files updated before commit)
+- Add version mismatch detection and sync
+- Add examples for version sync and mismatch detection
 
 ### 1.1.1 (2026-01-05)
 - Restore Bash(ls:*) and Bash(cat:*) to allowed-tools

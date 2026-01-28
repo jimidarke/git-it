@@ -557,3 +557,116 @@ Saving...
   Committed: fix(config): update timeout value
   Tagged: v1.7.1
 ```
+
+---
+
+## Example 18: Version Sync Across Multiple Files
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: main
+
+Analyzing changes...
+  Modified: src/api/client.py (+45, -12)
+  Modified: tests/test_client.py (+20, -5)
+
+Scanning version references...
+  Found: VERSION.txt (1.7.1)
+  Found: package.json (1.7.1)
+  Found: pyproject.toml (1.7.1)
+  Found: src/__init__.py (1.7.1)
+
+All versions in sync ✓
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(api): add retry logic to client
+
+          Co-Authored-By: Claude <noreply@anthropic.com>
+
+Version:  1.7.1 → 1.8.0 (MINOR)
+Files:    VERSION.txt, package.json, pyproject.toml, src/__init__.py
+Tag:      v1.8.0
+Branch:   main
+
+Changes (2 files):
+  Modified: src/api/client.py (+45, -12)
+  Modified: tests/test_client.py (+20, -5)
+
+Lines: +65, -17
+
+Save it? [Y/n] Y
+
+Security scan: ✓ Passed
+
+Updating versions...
+  ✓ VERSION.txt: 1.7.1 → 1.8.0
+  ✓ package.json: 1.7.1 → 1.8.0
+  ✓ pyproject.toml: 1.7.1 → 1.8.0
+  ✓ src/__init__.py: 1.7.1 → 1.8.0
+
+Saving...
+  Committed: feat(api): add retry logic to client
+  Tagged: v1.8.0
+
+Push to remote? [y/N]
+```
+
+---
+
+## Example 19: Version Mismatch Detection
+
+```
+$ /git-it
+
+Checking environment... OK
+Branch: main
+
+Analyzing changes...
+  Added: src/utils/helpers.py (+67 lines)
+
+Scanning version references...
+  Found: VERSION.txt (1.8.0)
+  Found: package.json (1.7.0)
+  Found: pyproject.toml (1.8.0)
+
+⚠️ Version mismatch detected:
+  VERSION.txt:    1.8.0
+  package.json:   1.7.0  ← out of sync
+  pyproject.toml: 1.8.0
+
+Sync all to 1.9.0? [Y/n] Y
+
+=== SAVE POINT SUMMARY ===
+
+Message:  feat(utils): add helper functions
+
+          Co-Authored-By: Claude <noreply@anthropic.com>
+
+Version:  1.8.0 → 1.9.0 (MINOR)
+Files:    VERSION.txt, package.json, pyproject.toml
+Tag:      v1.9.0
+Branch:   main
+
+Changes (1 file):
+  New: src/utils/helpers.py (+67 lines)
+
+Lines: +67
+
+Save it? [Y/n] Y
+
+Security scan: ✓ Passed
+
+Updating versions...
+  ✓ VERSION.txt: 1.8.0 → 1.9.0
+  ✓ package.json: 1.7.0 → 1.9.0 (was out of sync)
+  ✓ pyproject.toml: 1.8.0 → 1.9.0
+
+Saving...
+  Committed: feat(utils): add helper functions
+  Tagged: v1.9.0
+
+Push to remote? [y/N]
+```

@@ -136,6 +136,16 @@ style: fix indentation in config files
 perf(query): optimize database lookups
 ```
 
+### Co-Authored-By Attribution
+
+All commits include a co-author trailer to credit AI assistance:
+
+```
+<type>(<scope>): <description>
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ---
 
 ## Conventional Commits Types
@@ -233,11 +243,71 @@ The skill creates and maintains VERSION.txt in project root:
 
 ---
 
+## Version Reference Patterns
+
+The skill scans for version references across the project to ensure atomic version bumps.
+
+### Files to Scan
+
+| File | Pattern | Example |
+|------|---------|---------|
+| `VERSION.txt` | Line 1: bare version | `1.2.3` |
+| `package.json` | `"version": "X.Y.Z"` | `"version": "1.2.3"` |
+| `pyproject.toml` | `version = "X.Y.Z"` | `version = "1.2.3"` |
+| `Cargo.toml` | `version = "X.Y.Z"` | `version = "1.2.3"` |
+| `setup.py` | `version="X.Y.Z"` or `version = "X.Y.Z"` | `version="1.2.3"` |
+| `pom.xml` | `<version>X.Y.Z</version>` | `<version>1.2.3</version>` |
+
+### Source File Patterns
+
+Scan common source files for version constants:
+
+| Pattern | Languages | Example |
+|---------|-----------|---------|
+| `__version__ = "X.Y.Z"` | Python | `__version__ = "1.2.3"` |
+| `VERSION = "X.Y.Z"` | Python, JavaScript, Go | `VERSION = "1.2.3"` |
+| `version = "X.Y.Z"` | Various | `version = "1.2.3"` |
+
+Search locations for source patterns:
+- `__init__.py`, `__version__.py`
+- `version.py`, `version.js`, `version.go`
+- `src/version.*`, `lib/version.*`
+
+### Version Scan Rules
+
+1. **Primary source**: `VERSION.txt` (line 1)
+2. **Scan on commit**: Check all manifest files and common source patterns
+3. **Consistency check**: Warn if versions don't match across files
+4. **Atomic update**: Update ALL detected files before commit (single commit)
+
+### Mismatch Warning Format
+
+```
+⚠️ Version mismatch detected:
+  VERSION.txt:      1.2.3
+  package.json:     1.2.2
+  pyproject.toml:   1.2.1
+
+Sync all to 1.2.4? [Y/n]
+```
+
+### Update Order
+
+1. Determine new version (bump type applied to VERSION.txt)
+2. Update VERSION.txt (including changelog)
+3. Update all detected manifest files
+4. Update source file constants
+5. Stage all changes
+6. Commit with co-author trailer
+7. Create annotated tag
+
+---
+
 ## Security Patterns
 
 For security-related detection patterns, see `SECURITY.md`.
 
-The security scan (Phase 9.5) detects:
+The security scan (Phase 10) detects:
 - **HIGH Priority**: API keys, private keys, credentials, database URLs, URI credentials, tokens
 - **LOW Priority**: Network exposure, debug flags, PII (credit cards, SSN/SIN, phone numbers, emails)
 
